@@ -85,13 +85,13 @@
   <mat-card class="export-container">
     <h2>💾 Speichern & Exportieren</h2>
 
-    <button mat-raised-button color="primary" (click)="savePackage()">📄Speichern als JSON</button>
-    <button mat-raised-button color="accent" (click)="exportToPDF()">💾 Als PDF speichern</button>
+    <button mat-raised-button color="primary" (click)="savePackage()">📄Speichern als JSON (Verschlüsselt)</button>
+    <button mat-raised-button color="accent" (click)="exportToPDF()">💾 Kopie als PDF speichern (Nicht Verschlüsselt ! )</button>
     <button mat-raised-button color="primary" (click)="exportDocumentationToPDF()">ℹ️ Dokumentation als PDF speichern</button>
 
     <!-- Datei hochladen in einer Material-Karte -->
     <mat-card class="upload-container">
-      <h3>📂 Gehaltspaket laden</h3>
+      <h3>📂 Gehaltspaket laden (Verschlüsselt)</h3>
       <p>Laden Sie eine gespeicherte JSON-Datei hoch, um Ihre Daten wiederherzustellen.</p>
       <input type="file" (change)="loadPackageFromFile($event)">
     </mat-card>

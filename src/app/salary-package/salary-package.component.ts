@@ -8,6 +8,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
 import { saveAs } from 'file-saver';
+import CryptoJS from "crypto-js";
+
 
 @Component({
   selector: 'app-salary-package',
@@ -122,22 +124,37 @@ getOvertimeBonus(): number {
     const fileName = prompt("Geben Sie den Namen der JSON-Datei ein:", "gehaltspaket");
     if (!fileName) return; // Falls der Benutzer abbricht
 
+    const password = prompt("Setzen Sie ein Passwort für die Datei:");
+    if (!password) {
+        alert("Speichern abgebrochen. Kein Passwort eingegeben.");
+        return;
+    }
+
     const data = {
-      baseSalary: this.baseSalary,
-      vacationDays: this.vacationDays,
-      workingHours: this.workingHours,
-      overtimeHours: this.overtimeHours,
-      companyCar: this.companyCar,
-      jobBike: this.jobBike,
-      performanceBonus: this.performanceBonus,
-      selectedTaxClass: this.selectedTaxClass,
-      netSalary: this.updateSalary(),
-      taxAmount: this.taxAmount
+        baseSalary: this.baseSalary,
+        vacationDays: this.vacationDays,
+        workingHours: this.workingHours,
+        overtimeHours: this.overtimeHours,
+        companyCar: this.companyCar,
+        jobBike: this.jobBike,
+        performanceBonus: this.performanceBonus,
+        selectedTaxClass: this.selectedTaxClass,
+        netSalary: this.updateSalary(),
+        taxAmount: this.taxAmount
     };
 
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    // JSON-Daten in String umwandeln
+    const jsonString = JSON.stringify(data);
+
+    // **AES-Verschlüsselung mit dem eingegebenen Passwort**
+    const encryptedData = CryptoJS.AES.encrypt(jsonString, password).toString();
+
+    // Datei speichern
+    const blob = new Blob([encryptedData], { type: "application/json" });
     saveAs(blob, `${fileName}.json`);
-  }
+
+    alert("Die Datei wurde sicher verschlüsselt gespeichert.");
+}
 
 
   /**
@@ -149,23 +166,43 @@ getOvertimeBonus(): number {
 
     const reader = new FileReader();
     reader.onload = (e: any) => {
-      try {
-        const data = JSON.parse(e.target.result);
-        this.baseSalary = data.baseSalary;
-        this.vacationDays = data.vacationDays;
-        this.workingHours = data.workingHours;
-        this.overtimeHours = data.overtimeHours;
-        this.companyCar = data.companyCar;
-        this.jobBike = data.jobBike;
-        this.performanceBonus = data.performanceBonus;
-        this.selectedTaxClass = data.selectedTaxClass;
+        const encryptedData = e.target.result;
 
-        // **Gehalt sofort neu berechnen**
-        this.updateSalary();
+        const password = prompt("Geben Sie das Passwort ein, um die Datei zu entschlüsseln:");
+        if (!password) {
+            alert("Laden abgebrochen. Kein Passwort eingegeben.");
+            return;
+        }
 
-      } catch (error) {
-        console.error("Fehler beim Laden der Datei", error);
-      }
+        try {
+            // **Entschlüsselung mit AES**
+            const bytes = CryptoJS.AES.decrypt(encryptedData, password);
+            const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+
+            if (!decryptedData) {
+                throw new Error("Falsches Passwort oder beschädigte Datei.");
+            }
+
+            // **JSON-Daten parsen**
+            const data = JSON.parse(decryptedData);
+
+            // **Daten setzen**
+            this.baseSalary = data.baseSalary;
+            this.vacationDays = data.vacationDays;
+            this.workingHours = data.workingHours;
+            this.overtimeHours = data.overtimeHours;
+            this.companyCar = data.companyCar;
+            this.jobBike = data.jobBike;
+            this.performanceBonus = data.performanceBonus;
+            this.selectedTaxClass = data.selectedTaxClass;
+
+            // **Gehaltsberechnung aktualisieren**
+            this.updateSalary();
+
+            alert("Die Datei wurde erfolgreich geladen.");
+        } catch (error) {
+            alert("Fehler beim Laden der Datei: Falsches Passwort oder beschädigte Datei.");
+        }
     };
 
     reader.readAsText(file);
@@ -244,10 +281,6 @@ getOvertimeBonus(): number {
     // ** Speichern der Datei **
     doc.save(`${fileName}.pdf`);
 }
-
-
-
-
   
   /**
    * Erstellt und speichert die Dokumentation als PDF mit professionellem Styling.
