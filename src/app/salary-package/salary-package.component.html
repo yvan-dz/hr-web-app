@@ -9,14 +9,14 @@
     <!-- Grundgehalt -->
     <mat-form-field appearance="fill">
       <mat-label>📌 Grundgehalt (Brutto €)</mat-label>
-      <input matInput type="number" [(ngModel)]="baseSalary">
+      <input matInput type="number" [(ngModel)]="baseSalary" (ngModelChange)="updateSalary()">
       <mat-hint>Monatliches Bruttogehalt vor Abzügen.</mat-hint>
     </mat-form-field>
 
     <!-- Steuerklasse Auswahl -->
     <mat-form-field appearance="fill">
       <mat-label>🏛 Steuerklasse</mat-label>
-      <mat-select [(ngModel)]="selectedTaxClass">
+      <mat-select [(ngModel)]="selectedTaxClass" (ngModelChange)="updateSalary()">
         <mat-option *ngFor="let taxClass of [1, 2, 3, 4, 5, 6]" [value]="taxClass">
           Steuerklasse {{ taxClass }}
         </mat-option>
@@ -26,73 +26,73 @@
     <!-- Urlaubstage -->
     <mat-form-field appearance="fill">
       <mat-label>🏖️ Urlaubstage</mat-label>
-      <input matInput type="number" [(ngModel)]="vacationDays">
+      <input matInput type="number" [(ngModel)]="vacationDays" (ngModelChange)="updateSalary()">
       <mat-hint>Standard: 28 Tage. Ab 30 Tagen Abzug von 150 € pro Tag.</mat-hint>
     </mat-form-field>
 
     <!-- Arbeitsstunden -->
     <mat-form-field appearance="fill">
       <mat-label>⏳ Arbeitsstunden pro Woche</mat-label>
-      <input matInput type="number" [(ngModel)]="workingHours">
+      <input matInput type="number" [(ngModel)]="workingHours" (ngModelChange)="updateSalary()">
       <mat-hint>Standard: 40 Stunden. Weniger Stunden = Gehaltskürzung.</mat-hint>
     </mat-form-field>
 
     <!-- Überstunden -->
     <mat-form-field appearance="fill">
       <mat-label>🔥 Überstunden pro Monat</mat-label>
-      <input matInput type="number" [(ngModel)]="overtimeHours">
-      <mat-hint>Ab der 10. Stunde: 30 € pro Stunde.</mat-hint>
+      <input matInput type="number" [(ngModel)]="overtimeHours" (ngModelChange)="updateSalary()">
+      <mat-hint>Standard: 30 € pro Stunde.</mat-hint>
     </mat-form-field>
 
     <!-- Bonus -->
     <mat-form-field appearance="fill">
       <mat-label>🎁 Leistungsbonus (€)</mat-label>
-      <input matInput type="number" [(ngModel)]="performanceBonus">
+      <input matInput type="number" [(ngModel)]="performanceBonus" (ngModelChange)="updateSalary()">
       <mat-hint>Individuelle Bonuszahlungen pro Monat.</mat-hint>
     </mat-form-field>
 
     <!-- Firmenwagen -->
-    <mat-checkbox class="checkbox" [(ngModel)]="companyCar">🚗 Firmenwagen nutzen?</mat-checkbox>
+    <mat-checkbox [(ngModel)]="companyCar" (ngModelChange)="updateSalary()">🚗 Firmenwagen nutzen?</mat-checkbox>
     <mat-hint>Firmenwagen reduziert das Gehalt um 800 €.</mat-hint>
 
     <!-- JobRad -->
-    <mat-checkbox class="checkbox" [(ngModel)]="jobBike">🚲 JobRad nutzen?</mat-checkbox>
+    <mat-checkbox [(ngModel)]="jobBike" (ngModelChange)="updateSalary()">🚲 JobRad nutzen?</mat-checkbox>
     <mat-hint>JobRad reduziert das Gehalt um 50 €.</mat-hint>
   </div>
 
   <!-- Gehaltsberechnung -->
   <mat-card class="summary">
     <h3>📌 Gehaltsberechnung</h3>
-    <p><strong>Brutto-Gehalt:</strong> {{ baseSalary | currency }}</p>
-    <p><strong>- Steuerabzüge:</strong> {{ taxAmount | currency }}</p>
-    <p><strong>- Urlaubskürzung:</strong> {{ getVacationPenalty() | currency }}</p>
-    <p><strong>- Teilzeit-Abzug:</strong> {{ getHoursPenalty() | currency }}</p>
-    <p><strong>+ Überstundenvergütung:</strong> {{ getOvertimeBonus() | currency }}</p>
+    <p><strong>Brutto-Gehalt:</strong> {{ baseSalary | currency:'EUR':'symbol' }}    </p>
+    <p><strong>- Steuerabzüge:</strong> {{ taxAmount | currency:'EUR':'symbol' }}</p>
+    <p><strong>- Urlaubskürzung:</strong> {{ getVacationPenalty() | currency:'EUR':'symbol' }}</p>
+    <p><strong>- Teilzeit-Abzug:</strong> {{ getHoursPenalty() | currency:'EUR':'symbol' }}</p>
+    <p><strong>+ Extra-Arbeitsstunden Bonus:</strong> {{ getExtraHoursBonus() | currency:'EUR':'symbol' }}</p>    
+    <p><strong>+ Überstundenvergütung:</strong> {{ getOvertimeBonus() | currency:'EUR':'symbol' }}</p>
     <p><strong>- Firmenwagen-Abzug:</strong> {{ companyCar ? '-800 €' : '0 €' }}</p>
     <p><strong>- JobRad-Abzug:</strong> {{ jobBike ? '-50 €' : '0 €' }}</p>
-    <p><strong>+ Bonus:</strong> {{ performanceBonus | currency }}</p>
+    <p><strong>+ Bonus:</strong> {{ performanceBonus | currency:'EUR':'symbol' }}</p>
   </mat-card>
 
   <!-- Netto-Gehalt -->
   <mat-card class="net-salary">
-    <h3>💶 Dein Netto-Gehalt:</h3>
-    <h2>📅 Pro Monat: <strong>{{ calculateSalary() / 12 | currency }}</strong></h2>
-    <h2>📆 Pro Jahr: <strong>{{ calculateSalary() | currency }}</strong></h2>
+    <h3>💶 Netto-Gehalt:</h3>
+    <h2>📅 Pro Monat: <strong>{{ netSalary / 12 | currency:'EUR':'symbol' }}</strong></h2>
+    <h2>📆 Pro Jahr: <strong>{{ netSalary | currency:'EUR':'symbol' }}</strong></h2>
   </mat-card>
 
   <!-- Speicher- und Export-Optionen -->
   <mat-card class="export-container">
     <h2>💾 Speichern & Exportieren</h2>
 
-    <button mat-raised-button color="primary" (click)="savePackage()">💾 Speichern als JSON</button>
-    <button mat-raised-button color="accent" (click)="exportToPDF()">📄 Als PDF speichern</button>
+    <button mat-raised-button color="primary" (click)="savePackage()">📄Speichern als JSON</button>
+    <button mat-raised-button color="accent" (click)="exportToPDF()">💾 Als PDF speichern</button>
 
-    <!-- Datei hochladen in einer einfachen Material-Karte -->
-<mat-card class="upload-container">
-  <h3>📂 Gehaltspaket laden</h3>
-  <p>Laden Sie eine gespeicherte JSON-Datei hoch, um Ihre Daten wiederherzustellen.</p>
-  <input type="file" (change)="loadPackageFromFile($event)">
-</mat-card>
-
+    <!-- Datei hochladen in einer Material-Karte -->
+    <mat-card class="upload-container">
+      <h3>📂 Gehaltspaket laden</h3>
+      <p>Laden Sie eine gespeicherte JSON-Datei hoch, um Ihre Daten wiederherzustellen.</p>
+      <input type="file" (change)="loadPackageFromFile($event)">
+    </mat-card>
   </mat-card>
 </mat-card>

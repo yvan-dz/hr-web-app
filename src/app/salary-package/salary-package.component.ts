@@ -27,27 +27,27 @@ export class SalaryPackageComponent {
   performanceBonus: number = 0;
   selectedTaxClass: number = 1; // Standard: Steuerklasse 1
   taxAmount: number = 0; // Steuerabzüge
+  netSalary: number = 0;
+
 
   /**
    * Berechnet das Netto-Gehalt und Steuerabzüge.
    */
-  calculateSalary(): number {
+  updateSalary(): void {
     let salary = this.baseSalary;
     salary -= this.getVacationPenalty();
     salary -= this.getHoursPenalty();
+    salary += this.getExtraHoursBonus(); // Bonus für mehr Arbeitsstunden
     salary += this.getOvertimeBonus();
     if (this.companyCar) salary -= 800;
     if (this.jobBike) salary -= 50;
     salary += this.performanceBonus;
-  
-    // 🏛 Steuerberechnung
-    setTimeout(() => {
-      this.taxAmount = this.calculateTaxes(salary);
-    });
-  
-    salary -= this.taxAmount;
-    return Math.round(salary);
-  }
+
+    // 🏛 Steuerberechnung sofort durchführen
+    this.taxAmount = this.calculateTaxes(salary);
+    this.netSalary = Math.round(salary - this.taxAmount);
+}
+
   
 
   /**
@@ -101,12 +101,19 @@ export class SalaryPackageComponent {
     return this.workingHours < 40 ? (40 - this.workingHours) * (this.baseSalary / 40) : 0;
   }
 
-  /**
-   * Berechnet die Vergütung für Überstunden.
+ /**
+   * Berechnet zusätzlichen Gehaltsanteil für mehr als 40 Arbeitsstunden/Woche.
    */
-  getOvertimeBonus(): number {
-    return this.overtimeHours > 10 ? (this.overtimeHours - 10) * 30 : 0;
-  }
+ getExtraHoursBonus(): number {
+  return this.workingHours > 40 ? (this.workingHours - 40) * (this.baseSalary / 160) : 0;
+}
+
+/**
+ * Berechnet die Vergütung für Überstunden (jede Überstunde zählt).
+ */
+getOvertimeBonus(): number {
+  return this.overtimeHours * 30; // Jede Überstunde = 30 €
+}
 
   /**
    * Speichert die Gehaltsdaten als JSON.
@@ -124,7 +131,7 @@ export class SalaryPackageComponent {
       jobBike: this.jobBike,
       performanceBonus: this.performanceBonus,
       selectedTaxClass: this.selectedTaxClass,
-      netSalary: this.calculateSalary(),
+      netSalary: this.updateSalary(),
       taxAmount: this.taxAmount
     };
 
@@ -152,33 +159,90 @@ export class SalaryPackageComponent {
         this.jobBike = data.jobBike;
         this.performanceBonus = data.performanceBonus;
         this.selectedTaxClass = data.selectedTaxClass;
+
+        // **Gehalt sofort neu berechnen**
+        this.updateSalary();
+
       } catch (error) {
         console.error("Fehler beim Laden der Datei", error);
       }
     };
 
     reader.readAsText(file);
-  }
+}
+
 
   /**
    * Erstellt ein PDF mit Gehaltsdetails.
    */
   exportToPDF(): void {
     const fileName = prompt("Geben Sie den Namen der PDF-Datei ein:", "gehaltspaket");
-    if (!fileName) return; // Falls der Benutzer abbricht
+    if (!fileName) return;
 
     const doc = new jsPDF();
-    doc.text("📄 Gehaltspaket Übersicht", 10, 10);
-    doc.text(`Grundgehalt: ${this.baseSalary}€`, 10, 20);
-    doc.text(`Urlaubstage: ${this.vacationDays}`, 10, 30);
-    doc.text(`Arbeitsstunden: ${this.workingHours}`, 10, 40);
-    doc.text(`Überstunden: ${this.overtimeHours}`, 10, 50);
-    doc.text(`Firmenwagen: ${this.companyCar ? 'Ja' : 'Nein'}`, 10, 60);
-    doc.text(`JobRad: ${this.jobBike ? 'Ja' : 'Nein'}`, 10, 70);
-    doc.text(`Bonus: ${this.performanceBonus}€`, 10, 80);
-    doc.text(`Steuerklasse: ${this.selectedTaxClass}`, 10, 90);
-    doc.text(`Steuerabzüge: ${this.taxAmount}€`, 10, 100);
-    doc.text(`Neues Netto-Gehalt: ${this.calculateSalary()}€`, 10, 110);
+
+    // ** Titel Formatieren **
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.setTextColor(40, 40, 40);
+    doc.text("Gehaltspaket Übersicht", 105, 15, { align: "center" });
+
+    // ** Linie unter dem Titel **
+    doc.setLineWidth(0.5);
+    doc.line(14, 20, 196, 20);
+
+    // ** Abschnittstitel **
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 150); // Dunkelblau
+    doc.text("Allgemeine Daten", 14, 30);
+
+    // ** Tabelle mit Rahmen und Hintergrundfarben **
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    const tableData = [
+        ["Grundgehalt:", `${this.baseSalary} €`],
+        ["Urlaubstage:", `${this.vacationDays} Tage`],
+        ["Arbeitsstunden:", `${this.workingHours} Stunden/Woche`],
+        ["Überstunden:", `${this.overtimeHours} Stunden/Monat`],
+        ["Firmenwagen:", this.companyCar ? "Ja (-800 €)" : "Nein"],
+        ["JobRad:", this.jobBike ? "Ja (-50 €)" : "Nein"],
+        ["Bonus:", `${this.performanceBonus} €`],
+        ["Steuerklasse:", `Klasse ${this.selectedTaxClass}`],
+        ["Steuerabzüge:", `-${this.taxAmount} €`],
+        
+    ];
+
+    let yPosition = 37;
+    tableData.forEach(([key, value], index) => {
+        // Hintergrundfarbe für abwechselnde Zeilen
+        if (index % 2 === 0) {
+            doc.setFillColor(240, 240, 240); // Hellgrau
+            doc.rect(14, yPosition - 4, 180, 6, "F"); // Rechteck als Hintergrund
+        }
+
+        // ** Schlüssel (links) **
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(0, 0, 0);
+        doc.text(key, 14, yPosition);
+
+        // ** Wert (rechts) **
+        doc.setFont("helvetica", "normal");
+        doc.text(value, 90, yPosition);
+
+        yPosition += 7;
+    });
+
+    // ** Netto-Gehalt hervorheben **
+    doc.setFillColor(255, 230, 204); // Helles Orange für Netto-Gehalt
+    doc.rect(14, yPosition - 4, 180, 6, "F");
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(0, 150, 0); // Rot für Netto-Gehalt
+    doc.text(" Netto-Gehalt:", 14, yPosition);
+    doc.setFont("helvetica", "bold");
+    doc.text(`${this.netSalary} €`, 90, yPosition);
+
+    // ** Speichern der Datei **
     doc.save(`${fileName}.pdf`);
-  }
+}
+
 }
