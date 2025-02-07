@@ -1,97 +1,132 @@
-/* 🟥 Grundlegendes Styling mit rotem Farbschema */
+/* 🟥 Modernes Styling mit hochwertigem Rot-Gold-Farbschema */
 .container {
     max-width: 900px;
     margin: auto;
-    padding: 20px;
-    background: #fff5f5; /* Heller Rot-Ton für professionellen Look */
-    border-radius: 8px;
-    box-shadow: 0px 2px 8px rgba(255, 0, 0, 0.2);
+    padding: 25px;
+    background: linear-gradient(to bottom, #fff5f5, #ffe6e6);
+    border-radius: 12px;
+    box-shadow: 0px 6px 15px rgba(255, 0, 0, 0.2);
+    transition: all 0.3s ease-in-out;
 }
 
+/* 🏆 Titel & Beschreibung */
 .title {
     text-align: center;
-    font-size: 26px;
+    font-size: 28px;
     font-weight: bold;
-    margin-bottom: 15px;
-    color: #b30000; /* Dunkelrot */
+    margin-bottom: 18px;
+    color: #b30000;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .description {
     text-align: center;
-    color: #800000; /* T&A dunkles Rot */
+    color: #800000;
     font-size: 17px;
     margin-bottom: 25px;
+    font-weight: 500;
 }
 
-/* 🟧 Form-Grid für bessere Anordnung */
+/* 📊 Form-Grid: Maximale Flexibilität */
 .form-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px;
 }
 
-/* Checkboxes besser ausrichten */
+/* 🎯 Optimierte Checkboxes */
 .checkbox {
     display: flex;
     align-items: center;
+    gap: 10px;
 }
 
-/* Karten-Design für Gehaltsübersicht */
+/* 🏦 Karten-Design für Gehaltsübersicht */
 .summary, .net-salary, .export-container {
     margin-top: 20px;
-    padding: 20px;
-    background: #ffe6e6; /* Leichtes Rot für professionelle UI */
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(255, 0, 0, 0.15);
+    padding: 22px;
+    background: #ffe6e6;
+    border-radius: 12px;
+    box-shadow: 0px 5px 15px rgba(255, 0, 0, 0.15);
+    transition: transform 0.2s ease-in-out;
 }
 
-/* Typografie für Überschriften */
+.summary:hover, .net-salary:hover, .export-container:hover {
+    transform: translateY(-5px);
+}
+
+/* 🔠 Typografie für Überschriften */
 h2, h3 {
     color: #990000;
+    font-size: 22px;
+    font-weight: bold;
 }
 
-/* Buttons mit Hover-Effekt */
+/* 🛠️ Buttons – Luxuriöser Look mit Gold-Akzenten */
 button {
     width: 100%;
-    margin-top: 10px;
-    background-color: #cc0000; /* Rotes Hauptdesign */
+    margin-top: 12px;
+    background: linear-gradient(to right, #cc0000, #990000);
     color: white;
-    padding: 10px;
+    padding: 12px;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 16px;
-    transition: background 0.3s ease-in-out;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.15);
 }
 
 button:hover {
-    background-color: #b30000; /* Dunkleres Rot für Hover */
+    background: linear-gradient(to right, #b30000, #800000);
+    transform: scale(1.05);
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Datei-Upload Styling */
+/* Standard-Input-Design zurücksetzen */
+input[type="file"] {
+    display: block;
+    width: 100%;
+    padding: 4px;
+    border: 2px solid #b30000;
+    border-radius: 6px;
+    font-size: 16px;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+/* Hover-Effekt */
+input[type="file"]:hover {
+    border-color: #800000;
+}
+
+/* Fokus-Effekt */
+input[type="file"]:focus {
+    outline: none;
+    border-color: #800000;
+    box-shadow: 0px 0px 12px rgba(179, 0, 0, 0.3);
+}
+
+/* Optional: Stil für das umgebende Label */
 .upload-container {
     margin-top: 20px;
-    padding: 15px;
+    padding: 18px;
     text-align: center;
-    background: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0px 2px 5px rgba(255, 0, 0, 0.1);
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 3px 8px rgba(255, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease-in-out;
 }
 
-.upload-container h3 {
-    margin-bottom: 10px;
-    color: #990000;
+.upload-container:hover {
+    box-shadow: 0px 5px 12px rgba(255, 0, 0, 0.2);
 }
 
-/* Input-Felder schöner gestalten */
-input[type="file"], input[type="number"], mat-select {
-    margin-top: 10px;
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #b30000;
-    border-radius: 5px;
-    font-size: 16px;
-}
+
+
 
 /* 🟢 MEDIA QUERIES für verschiedene Bildschirmgrößen */
 

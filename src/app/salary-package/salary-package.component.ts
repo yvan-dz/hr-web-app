@@ -245,4 +245,136 @@ getOvertimeBonus(): number {
     doc.save(`${fileName}.pdf`);
 }
 
+
+
+
+  
+  /**
+   * Erstellt und speichert die Dokumentation als PDF mit professionellem Styling.
+   */
+  exportDocumentationToPDF(): void {
+    const fileName = "Gehaltspaket_Dokumentation";
+    const doc = new jsPDF();
+
+    // Titel-Formatierung
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.setTextColor(30, 30, 30);
+    doc.text("Gehaltspaket Dokumentation", 105, 15, { align: "center" });
+
+    // Linie unter dem Titel
+    doc.setLineWidth(0.5);
+    doc.line(14, 20, 196, 20);
+
+    let yPosition = 30;
+
+    // Abschnittstitel-Funktion mit professionellem Styling
+    const addSectionTitle = (title: string, y: number) => {
+      doc.setFontSize(14);
+      doc.setTextColor(0, 0, 128); // Dunkelblau für professionelle Akzente
+      doc.setFont("helvetica", "bold");
+      doc.text(title, 14, y);
+    };
+
+    // Inhalt-Funktion für Textabschnitte mit ordentlichem Abstand
+    const addContent = (text: string, y: number) => {
+      doc.setFontSize(11);
+      doc.setTextColor(50, 50, 50);
+      doc.setFont("helvetica", "normal");
+      const splitText = doc.splitTextToSize(text, 180);
+      doc.text(splitText, 14, y);
+      return y + splitText.length * 6;
+    };
+
+    // Einführung
+    addSectionTitle("1. Einführung", yPosition);
+    yPosition = addContent(
+      "Der Gehaltspaket-Konfigurator ermöglicht es Mitarbeitenden, verschiedene Faktoren wie " +
+      "das Grundgehalt, Überstunden, Urlaubstage und Zusatzleistungen anzupassen. Die Anwendung " +
+      "berechnet in Echtzeit das Netto-Gehalt, berücksichtigt Steuerabzüge und ermöglicht " +
+      "die Speicherung als JSON oder PDF.", yPosition + 10);
+
+    // Gehaltsberechnung
+    addSectionTitle("2. Gehaltsberechnung", yPosition);
+    yPosition = addContent("Das Gehalt setzt sich aus mehreren Faktoren zusammen:", yPosition + 10);
+
+    const bulletPoints = [
+      "Grundgehalt: Basisbruttoeinkommen.",
+      "Steuerklasse: Steuerliche Einstufung beeinflusst Abzüge.",
+      "Urlaubstage: Ab 30 Tagen Gehaltskürzung von 150 € pro Tag.",
+      "Arbeitsstunden pro Woche: Mehr als 40 Stunden = Gehaltssteigerung.",
+      "Überstunden: Jede Überstunde wird mit 30 € vergütet.",
+      "Firmenwagen: Gehaltsabzug von 800 € pro Monat.",
+      "JobRad: Gehaltsabzug von 50 € pro Monat.",
+      "Leistungsbonus: Individuelle Bonuszahlungen."
+    ];
+
+    bulletPoints.forEach((point, index) => {
+      doc.text("• " + point, 18, yPosition + (index * 7));
+    });
+
+    yPosition += bulletPoints.length * 7 + 10;
+
+    // Formeln & Logik
+    addSectionTitle("3. Formeln & Logik", yPosition);
+    yPosition = addContent(
+      "Netto-Gehalt = Grundgehalt - Urlaubskürzung - Teilzeit-Abzug + Extra-Stunden-Bonus + Überstundenbonus - Steuerabzüge",
+      yPosition + 10
+    );
+
+    // Steuerberechnung
+    addSectionTitle("Steuerberechnung", yPosition);
+    yPosition = addContent(
+      "Die Steuerberechnung basiert auf den deutschen Steuerklassen. Jede Klasse hat einen bestimmten Steuerfreibetrag. " +
+      "Das restliche Einkommen wird anhand einer progressiven Steuer berechnet.", yPosition + 10
+    );
+
+    // Urlaubskürzung
+    addSectionTitle("Urlaubskürzung", yPosition);
+    yPosition = addContent(
+      "Falls mehr als 30 Urlaubstage genommen werden, wird 150 € pro zusätzlichem Tag abgezogen.", yPosition + 10
+    );
+
+    // Extra-Stunden-Bonus
+    addSectionTitle("Extra-Stunden-Bonus", yPosition);
+    yPosition = addContent(
+      "Falls mehr als 40 Stunden pro Woche gearbeitet werden, wird das Gehalt anteilig erhöht.", yPosition + 10
+    );
+
+    // Überstundenvergütung
+    addSectionTitle("Überstundenvergütung", yPosition);
+    yPosition = addContent(
+      "Jede Überstunde wird mit 30 € vergütet.", yPosition + 10
+    );
+
+    // Speicher- und Exportfunktionen
+    addSectionTitle("4. Speicher- und Exportfunktionen", yPosition);
+    yPosition = addContent(
+      "Der Gehaltsrechner erlaubt es, die Konfiguration als JSON zu speichern oder als PDF zu exportieren.", yPosition + 10
+    );
+
+    const saveOptions = [
+      "JSON speichern → Zur späteren Nutzung oder Bearbeitung.",
+      "PDF-Export → Optisch formatierte Gehaltsübersicht."
+    ];
+
+    saveOptions.forEach((point, index) => {
+      doc.text("• " + point, 18, yPosition + (index * 7));
+    });
+
+    yPosition += saveOptions.length * 7 + 10;
+
+    // Nutzungshinweise
+    addSectionTitle("5. Nutzungshinweise", yPosition);
+    yPosition = addContent(
+      "Falls nach einer Aktualisierung der Seite nicht gespeicherte Daten verloren gehen, " +
+      "empfehlen wir, die JSON-Speicherfunktion zu nutzen.", yPosition + 10
+    );
+
+    // Speichern der PDF-Datei
+    doc.save(`${fileName}.pdf`);
+  }
 }
+
+
+
