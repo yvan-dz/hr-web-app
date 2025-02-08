@@ -1,11 +1,19 @@
 /* 🟥 Modernes Styling mit hochwertigem Rot-Gold-Farbschema */
+/* 🌑 Dark Mode - Professionelles Farbschema */
+body {
+    background-color: #1E252C; /* Dunkelgrauer Hintergrund */
+    color: #E0E0E0; /* Heller Text für bessere Lesbarkeit */
+    font-family: 'Arial', sans-serif;
+}
+
+/* 🏦 Container-Styling */
 .container {
     max-width: 900px;
     margin: auto;
     padding: 25px;
-    background: linear-gradient(to bottom, #fff5f5, #ffe6e6);
+    background: #2C363F; /* Dunkles Grau */
     border-radius: 12px;
-    box-shadow: 0px 6px 15px rgba(255, 0, 0, 0.2);
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.4);
     transition: all 0.3s ease-in-out;
 }
 
@@ -15,20 +23,20 @@
     font-size: 28px;
     font-weight: bold;
     margin-bottom: 18px;
-    color: #b30000;
+    color: #E0E0E0; /* Heller Titel */
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
 .description {
     text-align: center;
-    color: #800000;
+    color: #E0E0E0; /* Heller Grauton */
     font-size: 17px;
     margin-bottom: 25px;
     font-weight: 500;
 }
 
-/* 📊 Form-Grid: Maximale Flexibilität */
+/* 📊 Form-Grid für bessere Anordnung */
 .form-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -42,14 +50,17 @@
     gap: 10px;
 }
 
+
+
 /* 🏦 Karten-Design für Gehaltsübersicht */
 .summary, .net-salary, .export-container {
     margin-top: 20px;
     padding: 22px;
-    background: #ffe6e6;
+    background: #3B444F; /* Leicht dunkler als Container */
     border-radius: 12px;
-    box-shadow: 0px 5px 15px rgba(255, 0, 0, 0.15);
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.4);
     transition: transform 0.2s ease-in-out;
+    color: #E0E0E0;
 }
 
 .summary:hover, .net-salary:hover, .export-container:hover {
@@ -58,16 +69,16 @@
 
 /* 🔠 Typografie für Überschriften */
 h2, h3 {
-    color: #990000;
+    color: #E0E0E0; /* Weißlicher Ton */
     font-size: 22px;
     font-weight: bold;
 }
 
-/* 🛠️ Buttons – Luxuriöser Look mit Gold-Akzenten */
+/* 🛠️ Buttons – Hochwertiges Blau-Grau Design */
 button {
     width: 100%;
     margin-top: 12px;
-    background: linear-gradient(to right, #cc0000, #990000);
+    background: #394B58; /* Dunkelblau-Grau */
     color: white;
     padding: 12px;
     border: none;
@@ -76,56 +87,58 @@ button {
     font-size: 16px;
     font-weight: bold;
     transition: all 0.3s ease-in-out;
-    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.15);
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
 }
 
 button:hover {
-    background: linear-gradient(to right, #b30000, #800000);
+    background: #66AABB; /* Helles Blau */
     transform: scale(1.05);
-    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* Standard-Input-Design zurücksetzen */
-input[type="file"] {
-    display: block;
-    width: 100%;
-    padding: 4px;
-    border: 2px solid #b30000;
-    border-radius: 6px;
-    font-size: 16px;
-    background: white;
-    cursor: pointer;
-    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-}
-
-/* Hover-Effekt */
-input[type="file"]:hover {
-    border-color: #800000;
-}
-
-/* Fokus-Effekt */
-input[type="file"]:focus {
-    outline: none;
-    border-color: #800000;
-    box-shadow: 0px 0px 12px rgba(179, 0, 0, 0.3);
-}
-
-/* Optional: Stil für das umgebende Label */
+/* 📂 Datei-Upload Styling */
 .upload-container {
     margin-top: 20px;
     padding: 18px;
     text-align: center;
-    background: white;
+    background: #2C363F;
     border-radius: 10px;
-    box-shadow: 0px 3px 8px rgba(255, 0, 0, 0.1);
-    transition: box-shadow 0.3s ease-in-out;
+    border: 2px dashed #66AABB; /* Helles Blau */
+    color: #E0E0E0;
+    transition: box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out;
 }
 
 .upload-container:hover {
-    box-shadow: 0px 5px 12px rgba(255, 0, 0, 0.2);
+    box-shadow: 0px 5px 12px rgba(102, 170, 187, 0.5);
+    border-color: #A0D4E3;
 }
 
+/* 🖋️ Eingabefelder */
+input[type="file"], input[type="number"], input[type="text"], select {
+    margin-top: 10px;
+    width: 90%;
+    padding: 12px;
+    border: 2px solid #394B58;
+    border-radius: 6px;
+    font-size: 16px;
+    background: #E0E0E0;
+    color: #E0E0E0;
+    outline: none;
+    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
 
+input:focus, select:focus {
+    border-color: #66AABB;
+    box-shadow: 0px 0px 12px rgba(102, 170, 187, 0.3);
+}
+
+mat-hint{
+    color: #fff;
+}
+
+#check {
+    color: #FFFFFF !important; /* Weißer Text */
+}
 
 
 /* 🟢 MEDIA QUERIES für verschiedene Bildschirmgrößen */

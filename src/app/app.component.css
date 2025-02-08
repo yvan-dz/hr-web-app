@@ -1,7 +1,7 @@
-/* 🟥 Header mit T&A Systeme Farbschema */
+/* 🏛 Header - Dunkles, modernes Design */
 .header {
-  background: linear-gradient(to right, #cc0000, #800000); /* Rot-Ton für T&A Systeme */
-  color: white;
+  background: #1E252C; /* Dunkles Grau-Blau */
+  color: #E0E0E0; /* Heller Text */
   text-align: center;
   padding: 20px 0;
   font-size: 14px;
@@ -10,7 +10,43 @@
   transition: all 0.3s ease-in-out;
 }
 
-/* Responsive Größenanpassung */
+/* 🏦 Inhalt-Styling (Dark Theme) */
+.content {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #2C363F; /* Noch dunkler als der Header */
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
+  color: #E0E0E0; /* Heller Text */
+  transition: all 0.3s ease-in-out;
+}
+
+
+
+/* 📌 Dynamische Breitenanpassung */
+@media screen and (max-width: 1024px) {
+  .content {
+      max-width: 80%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .content {
+      max-width: 90%;
+      padding: 15px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .content {
+      max-width: 100%;
+      padding: 10px;
+      border-radius: 0px; /* Auf Smartphones keine Abrundung */
+  }
+}
+
+/* 📌 Responsive Größenanpassung */
 @media screen and (max-width: 1024px) {
   .header {
       font-size: 22px;
@@ -30,38 +66,5 @@
   .header {
       font-size: 18px;
       padding: 10px 0;
-  }
-}
-
-/* 🟧 Inhalt-Styling */
-.content {
-  max-width: 900px;
-  margin: 20px auto;
-  padding: 20px;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0px 4px 8px rgba(255, 0, 0, 0.1);
-  transition: all 0.3s ease-in-out;
-}
-
-/* Dynamische Breitenanpassung */
-@media screen and (max-width: 1024px) {
-  .content {
-      max-width: 80%;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .content {
-      max-width: 90%;
-      padding: 15px;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .content {
-      max-width: 100%;
-      padding: 10px;
-      border-radius: 0px; /* Auf Smartphones keine Abrundung */
   }
 }

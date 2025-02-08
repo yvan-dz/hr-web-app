@@ -37,18 +37,22 @@ export class SalaryPackageComponent {
    */
   updateSalary(): void {
     let salary = this.baseSalary;
+
     salary -= this.getVacationPenalty();
     salary -= this.getHoursPenalty();
     salary += this.getExtraHoursBonus(); // Bonus für mehr Arbeitsstunden
     salary += this.getOvertimeBonus();
-    if (this.companyCar) salary -= 800;
-    if (this.jobBike) salary -= 50;
     salary += this.performanceBonus;
 
-    // 🏛 Steuerberechnung sofort durchführen
+    // 🏎️ **Firmenwagen & JobRad als monatliche Abzüge berechnen**
+    if (this.companyCar) salary -= (500 * 12);  // 500€ pro Monat = 6000€ pro Jahr
+    if (this.jobBike) salary -= (50 * 12);  // 50€ pro Monat = 600€ pro Jahr
+
+    // 🏛 Steuerberechnung durchführen (auf Brutto-Gehalt inkl. Abzüge)
     this.taxAmount = this.calculateTaxes(salary);
     this.netSalary = Math.round(salary - this.taxAmount);
 }
+
 
   
 
@@ -287,126 +291,144 @@ getOvertimeBonus(): number {
    */
   exportDocumentationToPDF(): void {
     const fileName = "Gehaltspaket_Dokumentation";
-    const doc = new jsPDF();
+    const doc = new jsPDF("p", "mm", "a4");
+    let yPosition = 20;
 
-    // Titel-Formatierung
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(18);
+    // Funktion für Abschnittstitel mit professioneller Formatierung
+    const addSectionTitle = (title: string) => {
+        if (yPosition > 270) { // Falls Seite voll, neue Seite
+            doc.addPage();
+            yPosition = 20;
+        }
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(14); // Klare und gut lesbare Größe für Überschriften
+        doc.setTextColor(0, 0, 128);
+        doc.text(title, 14, yPosition);
+        yPosition += 8;
+        doc.setDrawColor(0, 0, 128);
+        doc.line(14, yPosition, 196, yPosition); // Linie unter der Überschrift
+        yPosition += 6;
+    };
+
+    // Funktion für normalen Text mit schönem Abstand und automatischem Seitenumbruch
+    const addContent = (text: string) => {
+        if (yPosition > 270) {
+            doc.addPage();
+            yPosition = 20;
+        }
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11); // Gut lesbare Schriftgröße für Text
+        doc.setTextColor(50, 50, 50);
+        const splitText = doc.splitTextToSize(text, 180);
+        doc.text(splitText, 14, yPosition);
+        yPosition += splitText.length * 6; // Genügend Abstand für nächsten Abschnitt
+    };
+
+    // Titel
+    doc.setFontSize(16);
     doc.setTextColor(30, 30, 30);
-    doc.text("Gehaltspaket Dokumentation", 105, 15, { align: "center" });
+    doc.text("Gehaltspaket Dokumentation", 105, yPosition, { align: "center" });
+    yPosition += 10;
 
     // Linie unter dem Titel
     doc.setLineWidth(0.5);
-    doc.line(14, 20, 196, 20);
-
-    let yPosition = 30;
-
-    // Abschnittstitel-Funktion mit professionellem Styling
-    const addSectionTitle = (title: string, y: number) => {
-      doc.setFontSize(14);
-      doc.setTextColor(0, 0, 128); // Dunkelblau für professionelle Akzente
-      doc.setFont("helvetica", "bold");
-      doc.text(title, 14, y);
-    };
-
-    // Inhalt-Funktion für Textabschnitte mit ordentlichem Abstand
-    const addContent = (text: string, y: number) => {
-      doc.setFontSize(11);
-      doc.setTextColor(50, 50, 50);
-      doc.setFont("helvetica", "normal");
-      const splitText = doc.splitTextToSize(text, 180);
-      doc.text(splitText, 14, y);
-      return y + splitText.length * 6;
-    };
+    doc.line(14, yPosition, 196, yPosition);
+    yPosition += 8;
 
     // Einführung
-    addSectionTitle("1. Einführung", yPosition);
-    yPosition = addContent(
-      "Der Gehaltspaket-Konfigurator ermöglicht es Mitarbeitenden, verschiedene Faktoren wie " +
-      "das Grundgehalt, Überstunden, Urlaubstage und Zusatzleistungen anzupassen. Die Anwendung " +
-      "berechnet in Echtzeit das Netto-Gehalt, berücksichtigt Steuerabzüge und ermöglicht " +
-      "die Speicherung als JSON oder PDF.", yPosition + 10);
+    addSectionTitle("1. Einführung");
+    addContent(
+        "Der Gehaltspaket-Konfigurator ermöglicht es Mitarbeitenden, verschiedene Faktoren wie " +
+        "das Grundgehalt, Überstunden, Urlaubstage und Zusatzleistungen anzupassen. Die Anwendung " +
+        "berechnet in Echtzeit das Netto-Gehalt, berücksichtigt Steuerabzüge und ermöglicht " +
+        "die Speicherung als JSON oder PDF."
+    );
 
     // Gehaltsberechnung
-    addSectionTitle("2. Gehaltsberechnung", yPosition);
-    yPosition = addContent("Das Gehalt setzt sich aus mehreren Faktoren zusammen:", yPosition + 10);
+    addSectionTitle("2. Gehaltsberechnung");
+    addContent("Das Gehalt setzt sich aus mehreren Faktoren zusammen:");
 
     const bulletPoints = [
-      "Grundgehalt: Basisbruttoeinkommen.",
-      "Steuerklasse: Steuerliche Einstufung beeinflusst Abzüge.",
-      "Urlaubstage: Ab 30 Tagen Gehaltskürzung von 150 € pro Tag.",
-      "Arbeitsstunden pro Woche: Mehr als 40 Stunden = Gehaltssteigerung.",
-      "Überstunden: Jede Überstunde wird mit 30 € vergütet.",
-      "Firmenwagen: Gehaltsabzug von 800 € pro Monat.",
-      "JobRad: Gehaltsabzug von 50 € pro Monat.",
-      "Leistungsbonus: Individuelle Bonuszahlungen."
+        "Grundgehalt: Basisbruttoeinkommen.",
+        "Steuerklasse: Steuerliche Einstufung beeinflusst Abzüge.",
+        "Urlaubstage: Ab 30 Tagen Gehaltskürzung von 150 € pro Tag.",
+        "Arbeitsstunden pro Woche: Mehr als 40 Stunden = Gehaltssteigerung.",
+        "Überstunden: Jede Überstunde wird mit 30 € vergütet.",
+        "Firmenwagen: Gehaltsabzug von 500 € pro Monat (~340 € nach Steuerabzug).",
+        "JobRad: Gehaltsabzug von 50 € pro Monat (~34 € nach Steuerabzug).",
+        "Leistungsbonus: Individuelle Bonuszahlungen."
     ];
 
     bulletPoints.forEach((point, index) => {
-      doc.text("• " + point, 18, yPosition + (index * 7));
+        if (yPosition > 270) {
+            doc.addPage();
+            yPosition = 20;
+        }
+        doc.setFontSize(11);
+        doc.text(`• ${point}`, 18, yPosition);
+        yPosition += 6;
     });
 
-    yPosition += bulletPoints.length * 7 + 10;
-
-    // Formeln & Logik
-    addSectionTitle("3. Formeln & Logik", yPosition);
-    yPosition = addContent(
-      "Netto-Gehalt = Grundgehalt - Urlaubskürzung - Teilzeit-Abzug + Extra-Stunden-Bonus + Überstundenbonus - Steuerabzüge",
-      yPosition + 10
-    );
+    yPosition += 10;
 
     // Steuerberechnung
-    addSectionTitle("Steuerberechnung", yPosition);
-    yPosition = addContent(
-      "Die Steuerberechnung basiert auf den deutschen Steuerklassen. Jede Klasse hat einen bestimmten Steuerfreibetrag. " +
-      "Das restliche Einkommen wird anhand einer progressiven Steuer berechnet.", yPosition + 10
+    addSectionTitle("3. Steuerberechnung");
+    addContent(
+        "Die Steuerberechnung erfolgt in drei Schritten:\n\n" +
+        "1. Steuerfreibetrag abziehen:\n" +
+        "   - Jede Steuerklasse hat einen festen Freibetrag.\n" +
+        "   - Beispiel (Steuerklasse 1, Jahreseinkommen 40.000 €):\n" +
+        "     - Steuerfreibetrag: 10.908 €\n" +
+        "     - Zu versteuerndes Einkommen: 40.000 € - 10.908 € = 29.092 €\n\n" +
+        "2. Steuersatz nach Einkommenshöhe berechnen:\n" +
+        "   - Steuerprogression: Je höher das Einkommen, desto höher der Steuersatz.\n" +
+        "   - Berechnung für Steuerklasse 1:\n" +
+        "     - 0 € - 10.908 €: 0 % Steuer = 0 €\n" +
+        "     - 10.908 € - 16.000 € (5.092 €): 14 % Steuer = 713 €\n" +
+        "     - 16.000 € - 31.000 € (15.000 €): 24 % Steuer = 3.600 €\n" +
+        "     - 31.000 € - 40.000 € (9.000 €): 32 % Steuer = 2.880 €\n" +
+        "     - Gesamtsteuer: 713 € + 3.600 € + 2.880 € = 7.193 €\n\n" +
+        "3. Netto-Gehalt berechnen:\n" +
+        "   - Brutto-Gehalt: 40.000 €\n" +
+        "   - Steuerabzug: 7.193 €\n" +
+        "   - Netto-Gehalt pro Jahr: 40.000 € - 7.193 € = 32.807 €\n" +
+        "   - Netto-Gehalt pro Monat: 32.807 € / 12 = 2.734 €\n\n" +
+        "Ein Firmenwagen oder JobRad wird zum Bruttogehalt addiert und somit versteuert. Beispiel für einen Firmenwagen mit 500 € pro Monat:\n" +
+        "   - Neues Brutto: 40.000 € + (500 € * 12) = 46.000 €\n" +
+        "   - Steuer auf 46.000 € berechnen (mit höheren Steuersätzen)\n" +
+        "   - Netto-Gehalt nach Abzug der Steuer und des Firmenwagen-Wertes."
     );
 
-    // Urlaubskürzung
-    addSectionTitle("Urlaubskürzung", yPosition);
-    yPosition = addContent(
-      "Falls mehr als 30 Urlaubstage genommen werden, wird 150 € pro zusätzlichem Tag abgezogen.", yPosition + 10
-    );
-
-    // Extra-Stunden-Bonus
-    addSectionTitle("Extra-Stunden-Bonus", yPosition);
-    yPosition = addContent(
-      "Falls mehr als 40 Stunden pro Woche gearbeitet werden, wird das Gehalt anteilig erhöht.", yPosition + 10
-    );
-
-    // Überstundenvergütung
-    addSectionTitle("Überstundenvergütung", yPosition);
-    yPosition = addContent(
-      "Jede Überstunde wird mit 30 € vergütet.", yPosition + 10
-    );
+    yPosition += 10;
 
     // Speicher- und Exportfunktionen
-    addSectionTitle("4. Speicher- und Exportfunktionen", yPosition);
-    yPosition = addContent(
-      "Der Gehaltsrechner erlaubt es, die Konfiguration als JSON zu speichern oder als PDF zu exportieren.", yPosition + 10
-    );
+    addSectionTitle("4. Speicher- und Exportfunktionen");
+    addContent("Der Gehaltsrechner erlaubt es, die Konfiguration als JSON zu speichern oder als PDF zu exportieren.");
 
     const saveOptions = [
-      "JSON speichern → Zur späteren Nutzung oder Bearbeitung.",
-      "PDF-Export → Optisch formatierte Gehaltsübersicht."
+        "JSON speichern: Zur späteren Nutzung oder Bearbeitung.",
+        "PDF-Export: Optisch formatierte Gehaltsübersicht."
     ];
 
     saveOptions.forEach((point, index) => {
-      doc.text("• " + point, 18, yPosition + (index * 7));
+        if (yPosition > 270) {
+            doc.addPage();
+            yPosition = 20;
+        }
+        doc.setFontSize(11);
+        doc.text(`• ${point}`, 18, yPosition);
+        yPosition += 6;
     });
 
-    yPosition += saveOptions.length * 7 + 10;
+    yPosition += 10;
 
     // Nutzungshinweise
-    addSectionTitle("5. Nutzungshinweise", yPosition);
-    yPosition = addContent(
-      "Falls nach einer Aktualisierung der Seite nicht gespeicherte Daten verloren gehen, " +
-      "empfehlen wir, die JSON-Speicherfunktion zu nutzen.", yPosition + 10
-    );
+    addSectionTitle("5. Nutzungshinweise");
+    addContent("Falls nach einer Aktualisierung der Seite nicht gespeicherte Daten verloren gehen, empfehlen wir, die JSON-Speicherfunktion zu nutzen.");
 
     // Speichern der PDF-Datei
     doc.save(`${fileName}.pdf`);
-  }
+}
 }
 
 

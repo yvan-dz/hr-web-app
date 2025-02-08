@@ -10,7 +10,7 @@
     <mat-form-field appearance="fill">
       <mat-label>📌 Grundgehalt (Brutto €)</mat-label>
       <input matInput type="number" [(ngModel)]="baseSalary" (ngModelChange)="updateSalary()">
-      <mat-hint>Monatliches Bruttogehalt vor Abzügen.</mat-hint>
+      <mat-hint>Jährliches Bruttogehalt vor Abzügen.</mat-hint>
     </mat-form-field>
 
     <!-- Steuerklasse Auswahl -->
@@ -52,11 +52,11 @@
     </mat-form-field>
 
     <!-- Firmenwagen -->
-    <mat-checkbox [(ngModel)]="companyCar" (ngModelChange)="updateSalary()">🚗 Firmenwagen nutzen?</mat-checkbox>
-    <mat-hint>Firmenwagen reduziert das Gehalt um 800 €.</mat-hint>
+    <mat-checkbox [(ngModel)]="companyCar" (ngModelChange)="updateSalary()"><span id="check">🚗 Firmenwagen nutzen?</span></mat-checkbox>
+    <mat-hint>Firmenwagen reduziert das Gehalt um 500 €.</mat-hint>
 
     <!-- JobRad -->
-    <mat-checkbox [(ngModel)]="jobBike" (ngModelChange)="updateSalary()">🚲 JobRad nutzen?</mat-checkbox>
+    <mat-checkbox [(ngModel)]="jobBike" (ngModelChange)="updateSalary()"><span id="check">🚲 JobRad nutzen?</span></mat-checkbox>
     <mat-hint>JobRad reduziert das Gehalt um 50 €.</mat-hint>
   </div>
 
